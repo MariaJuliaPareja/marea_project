@@ -130,7 +130,7 @@ class MAREADatabase:
     
     #Creating an Alert and saving on the database of alerts
     def create_alert(self, device_id, alert_type, threat_level, message, latitude, longitude):
-            """Create new alert"""
+            
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
             
@@ -146,4 +146,25 @@ class MAREADatabase:
             
             return alert_id
     
-    #
+    #Reading the most recent alerts with 7 days default
+    def get_recent_alerts(self, hours=168):  # 7 days default
+        
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT a.*, sr.ph, sr.dissolved_oxygen, sr.hydrocarbons, sr.fluorescence
+            FROM alerts a
+            LEFT JOIN sensor_readings sr ON a.device_id = sr.device_id 
+            WHERE a.created_at > datetime('now', '-{} hours')
+            ORDER BY a.created_at DESC
+        '''.format(hours))
+        
+        results = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        alerts = [dict(zip(columns, row)) for row in results]
+        
+        conn.close()
+        return alerts
+    
+    

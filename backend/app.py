@@ -62,6 +62,43 @@ class MAREADatabase:
         
         conn.commit()
         conn.close()
+        #Menssage of successfull database initialized
         print("Database initialized")
-        
+
+        #Sending the data, function reading
+        def insert_sensor_reading(self, data): 
+            try:
+                conn = sqlite3.connect(self.db_path)
+                cursor = conn.cursor()
+                # Execute and show the data
+                cursor.execute('''
+                    INSERT INTO sensor_readings 
+                    (device_id, timestamp, latitude, longitude, ph, dissolved_oxygen,
+                    hydrocarbons, temperature, turbidity, conductivity, fluorescence,
+                    battery_level, threat_level, confidence)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    data['device_id'],
+                    data['timestamp'],
+                    data['location']['latitude'],
+                    data['location']['longitude'],
+                    data['sensors']['ph'],
+                    data['sensors']['dissolved_oxygen'],
+                    data['sensors']['hydrocarbons'],
+                    data['sensors']['temperature'],
+                    data['sensors']['turbidity'],
+                    data['sensors']['conductivity'],
+                    data['sensors']['fluorescence'],
+                    data['system']['battery_level'],
+                    data['system']['threat_level'],
+                    data['system']['confidence']
+                ))
+                
+                conn.commit()
+                conn.close()
+                return True
+            except Exception as e:
+                print(f"Error: {e}") #Error exception
+                return False
+            
     

@@ -5,5 +5,21 @@ import time
 # Create blueprint for API routes
 api_bp = Blueprint('api', __name__)
 
-
 @api_bp.route('/sensor-data', methods=['POST'])
+
+# Function as an endpoint to recive the sensor data
+def receive_sensor_data():
+    try:
+        data = request.get_json() #JSON request to recive the data
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+        
+        # Validate required fields
+        required_fields = ['device_id', 'timestamp', 'location', 'sensors', 'system']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f"Missing field: {field}"}), 400
+        
+        # Use the database instance from the app
+        success = current_app.db.insert_sensor_reading(data)
+       

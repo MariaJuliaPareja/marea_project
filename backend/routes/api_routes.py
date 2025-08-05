@@ -22,4 +22,12 @@ def receive_sensor_data():
         
         # Use the database instance from the app
         success = current_app.db.insert_sensor_reading(data)
-       
+     
+        if not success:
+            return jsonify({"error": "Database error"}), 500
+        
+        # Check if alert is needed
+        alert_generated = False
+        if data['system']['threat_level'] in ['HIGH', 'CRITICAL']: #Two levels of threat
+            alert_generated = True
+           

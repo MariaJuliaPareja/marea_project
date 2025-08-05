@@ -51,3 +51,23 @@ def receive_sensor_data():
     except Exception as e:
         print(f"Error processing data: {e}")
         return jsonify({"error": "Internal server error"}), 500
+
+#Getting the sensor readings
+@api_bp.route('/readings', methods=['GET'])
+def get_readings():
+    try:
+        device_id = request.args.get('device_id')
+        hours = int(request.args.get('hours', 24)) #It will be each 24 hours
+        
+        readings = current_app.db.get_recent_readings(hours=hours, device_id=device_id)
+        
+        return jsonify({
+            "readings": readings,
+            "count": len(readings),
+            "hours": hours
+        })
+    except Exception as e: #Exception to show any erros
+        print(f"Error getting readings: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
+

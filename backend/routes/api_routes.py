@@ -41,6 +41,13 @@ def receive_sensor_data():
             )
             #The use of showing device id would be necesary for a scalable solution
             print(f"ALERT GENERATED: {data['device_id']} - {data['system']['threat_level']}")
-
+        return jsonify({ #The data will be send to verify the reciving data
+            "status": "success",
+            "message": "Data received successfully",
+            "alert_generated": alert_generated,
+            "timestamp": time.time()
+        }), 200
         
-        
+    except Exception as e:
+        print(f"Error processing data: {e}")
+        return jsonify({"error": "Internal server error"}), 500

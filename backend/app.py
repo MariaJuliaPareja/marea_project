@@ -45,5 +45,23 @@ class MAREADatabase:
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
-       
+        #Other database for the different alerts that will be shown on the app (alerts)
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS alerts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                device_id TEXT NOT NULL,
+                alert_type TEXT NOT NULL,
+                threat_level TEXT NOT NULL,
+                message TEXT,
+                latitude REAL,
+                longitude REAL,
+                resolved BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        conn.commit()
+        conn.close()
+        print("Database initialized")
+        
     

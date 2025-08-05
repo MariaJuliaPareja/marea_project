@@ -70,4 +70,18 @@ def get_readings():
         print(f"Error getting readings: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
+#Get the active alerts
+@api_bp.route('/alerts', methods=['GET'])
+def get_alerts():
+    try:
+        hours = int(request.args.get('hours', 168))  # 7 days default
+        alerts = current_app.db.get_recent_alerts(hours=hours)
+        
+        return jsonify({ #Counting the total of alerts
+            "alerts": alerts,
+            "count": len(alerts)
+        })
+    except Exception as e:
+        print(f"Error getting alerts: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 

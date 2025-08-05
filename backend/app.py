@@ -100,5 +100,31 @@ class MAREADatabase:
             except Exception as e:
                 print(f"Error: {e}") #Error exception
                 return False
+        
+        #Function to recive the recent readings
+        def get_recent_readings(self, hours=24, device_id=None):
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
             
+            query = '''
+                SELECT * FROM sensor_readings 
+                WHERE timestamp > ?
+            '''
+            params = [time.time() - (hours * 3600)]
+            
+            if device_id:
+                query += ' AND device_id = ?'
+                params.append(device_id)
+                
+            query += ' ORDER BY timestamp DESC LIMIT 100'
+            
+            cursor.execute(query, params)
+            results = cursor.fetchall()
+            
+            # Convert to dictionaries
+            columns = [desc[0] for desc in cursor.description]
+            readings = [dict(zip(columns, row)) for row in results]
+            
+            conn.close()
+        return readings
     

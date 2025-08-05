@@ -7,3 +7,7 @@ import time
 from datetime import datetime
 import os
 
+#Flask application
+app = Flask(__name__)
+CORS(app)
+

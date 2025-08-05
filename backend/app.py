@@ -128,3 +128,22 @@ class MAREADatabase:
             conn.close()
         return readings
     
+    #Creating an Alert and saving on the database of alerts
+    def create_alert(self, device_id, alert_type, threat_level, message, latitude, longitude):
+            """Create new alert"""
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            cursor.execute('''
+                INSERT INTO alerts 
+                (device_id, alert_type, threat_level, message, latitude, longitude)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (device_id, alert_type, threat_level, message, latitude, longitude))
+            
+            alert_id = cursor.lastrowid
+            conn.commit()
+            conn.close()
+            
+            return alert_id
+    
+    #

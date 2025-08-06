@@ -45,3 +45,15 @@ def register_blueprints(app):
     print("API: /api/*")
     print("Dashboard: /*")
 
+if __name__ == '__main__':
+    app = create_app()
+    #As we don't have a custom Cloud, we will compile this on this localhost directions
+    print("PetroSentry Backend ")
+    print("=" * 40)
+    print("Dashboard: http://localhost:8000")
+    print("API: http://localhost:8000/api/")
+    print("Modular structure loaded")
+    print("=" * 40)
+    
+    # Run server
+    app.run(host='0.0.0.0', port=8000, debug=True)

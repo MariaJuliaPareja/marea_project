@@ -21,7 +21,33 @@ class MAREASimulator:
         #Default levels of contamination
         self.contamination_active = False
         self.contamination_device = None
+    #Function to generate normal readings
+    def generate_normal_reading(self, device_id):
+        device = self.devices[device_id]
         
+        return {
+            "device_id": device_id,
+            "timestamp": time.time(),
+            "location": {
+                "latitude": device["lat"] + random.uniform(-0.001, 0.001),
+                "longitude": device["lon"] + random.uniform(-0.001, 0.001)
+            },
+            "sensors": { #Information as an example 
+                "ph": round(random.uniform(7.8, 8.4), 2),
+                "dissolved_oxygen": round(random.uniform(6.0, 8.5), 2),
+                "hydrocarbons": round(random.uniform(0.0, 2.0), 1),
+                "temperature": round(random.uniform(15.0, 25.0), 1),
+                "turbidity": round(random.uniform(1.0, 15.0), 1),
+                "conductivity": round(random.uniform(50000, 55000), 0),
+                "fluorescence": round(random.uniform(0.0, 0.5), 2)
+            },
+            "system": { #Clasifications of the alerts as an example
+                "battery_level": round(random.uniform(85, 100), 1),
+                "threat_level": "NORMAL",
+                "confidence": round(random.uniform(0.85, 0.95), 2)
+            }
+        }
+    
    
     if __name__ == "__main__":
         main()

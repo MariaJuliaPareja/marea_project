@@ -83,4 +83,34 @@ def get_devices():
     try:
         # Get recent readings to determine active devices
         readings = current_app.db.get_recent_readings(hours=2)
+        # Group by device_id to get device status
+        devices = {} 
+        for reading in readings:
+            device_id = reading['device_id']
+            if device_id not in devices:
+                devices[device_id] = {
+                    'device_id': device_id,
+                    'last_seen': reading['timestamp'], #The last revition of the device
+                    'battery_level': reading['battery_level'], #Charge of the sunlight battery
+                    'threat_level': reading['threat_level'], #The last threat level register
+                    'location': { #Using the GPS
+                        'latitude': reading['latitude'],
+                        'longitude': reading['longitude']
+                    }
+                }
+            else:
+                # Keep the most recent reading
+                if reading['timestamp'] > devices[device_id]['last_seen']:
+                    devices[device_id].update({
+                        'last_seen': reading['timestamp'],
+                        'battery_level': reading['battery_level'],
+                        'threat_level': reading['threat_level']
+                    })
         
+        return jsonify({ #JSON with the values of all devices and the total
+            "devices": list(devices.values()),
+            "count": len(devices)
+        })
+    except Exception as e:
+        print(f"Error getting devices: {e}")
+        return jsonify({"error": "Internal server error"}), 500         

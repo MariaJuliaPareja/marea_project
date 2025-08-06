@@ -13,19 +13,15 @@ def receive_sensor_data():
         data = request.get_json() #JSON request to recive the data
         if not data:
             return jsonify({"error": "No data provided"}), 400
-        
         #Validate required fields
         required_fields = ['device_id', 'timestamp', 'location', 'sensors', 'system']
         for field in required_fields:
             if field not in data:
                 return jsonify({"error": f"Missing field: {field}"}), 400
-        
         #Use the database instance from the app
         success = current_app.db.insert_sensor_reading(data)
-     
         if not success:
             return jsonify({"error": "Database error"}), 500
-        
         #Check if alert is needed
         alert_generated = False
         if data['system']['threat_level'] in ['HIGH', 'CRITICAL']: #Two levels of threat
@@ -46,8 +42,7 @@ def receive_sensor_data():
             "message": "Data received successfully",
             "alert_generated": alert_generated,
             "timestamp": time.time()
-        }), 200
-        
+        }), 200      
     except Exception as e:
         print(f"Error processing data: {e}")
         return jsonify({"error": "Internal server error"}), 500
@@ -58,9 +53,7 @@ def get_readings():
     try:
         device_id = request.args.get('device_id')
         hours = int(request.args.get('hours', 24)) #It will be each 24 hours
-        
         readings = current_app.db.get_recent_readings(hours=hours, device_id=device_id)
-        
         return jsonify({
             "readings": readings,
             "count": len(readings),
@@ -76,7 +69,6 @@ def get_alerts():
     try:
         hours = int(request.args.get('hours', 168))  # 7 days default
         alerts = current_app.db.get_recent_alerts(hours=hours)
-        
         return jsonify({ #Counting the total of alerts
             "alerts": alerts,
             "count": len(alerts)
@@ -85,3 +77,10 @@ def get_alerts():
         print(f"Error getting alerts: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
+# Getting the device list (in case we have a n number of devices)
+@api_bp.route('/devices', methods=['GET'])
+def get_devices():
+    try:
+        # Get recent readings to determine active devices
+        readings = current_app.db.get_recent_readings(hours=2)
+        

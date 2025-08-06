@@ -30,4 +30,18 @@ def init_components(app):
     print("Components initialized")
     print(f"Database: {app.config['DATABASE_PATH']}")
 
+#Function to register all modular routes
+def register_blueprints(app):
+    
+    # Import blueprints from routes
+    from routes.api_routes import api_bp
+    from routes.dashboard_routes import dashboard_bp
+    
+    # Register with prefixes
+    app.register_blueprint(api_bp, url_prefix='/api')
+    app.register_blueprint(dashboard_bp, url_prefix='/')
+    
+    print("Routes registered:")
+    print("API: /api/*")
+    print("Dashboard: /*")
 

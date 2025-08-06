@@ -164,8 +164,8 @@ DASHBOARD_HTML_TEMPLATE = '''
                         div.innerHTML = `
                             <strong>${statusIcon} ${reading.device_id}</strong><br>
                             <small>${date.toLocaleTimeString()}</small><br>
-                            pH: ${reading.ph} | O₂: ${reading.dissolved_oxygen} mg/L<br>
-                            HC: ${reading.hydrocarbons} ppm | Battery: ${reading.battery_level}%
+                            Turbity: ${reading.turbidity} mg/L<br>
+                            Battery: ${reading.battery_level}%
                         `;
                         
                         container.appendChild(div);

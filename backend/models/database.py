@@ -32,13 +32,7 @@ class MAREADatabase:
                 timestamp REAL NOT NULL,
                 latitude REAL,
                 longitude REAL,
-                ph REAL,
-                dissolved_oxygen REAL,
-                hydrocarbons REAL,
-                temperature REAL,
                 turbidity REAL,
-                conductivity REAL,
-                fluorescence REAL,
                 battery_level REAL,
                 threat_level TEXT,
                 confidence REAL,
@@ -73,8 +67,7 @@ class MAREADatabase:
                 # Execute and show the data
                 cursor.execute('''
                     INSERT INTO sensor_readings 
-                    (device_id, timestamp, latitude, longitude, ph, dissolved_oxygen,
-                    hydrocarbons, temperature, turbidity, conductivity, fluorescence,
+                    (device_id, timestamp, latitude, longitude, turbidity,
                     battery_level, threat_level, confidence)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ''', (
@@ -82,13 +75,7 @@ class MAREADatabase:
                     data['timestamp'],
                     data['location']['latitude'],
                     data['location']['longitude'],
-                    data['sensors']['ph'],
-                    data['sensors']['dissolved_oxygen'],
-                    data['sensors']['hydrocarbons'],
-                    data['sensors']['temperature'],
                     data['sensors']['turbidity'],
-                    data['sensors']['conductivity'],
-                    data['sensors']['fluorescence'],
                     data['system']['battery_level'],
                     data['system']['threat_level'],
                     data['system']['confidence']
@@ -153,7 +140,7 @@ class MAREADatabase:
         cursor = conn.cursor()
         
         cursor.execute('''
-            SELECT a.*, sr.ph, sr.dissolved_oxygen, sr.hydrocarbons, sr.fluorescence
+            SELECT a.*, sr.ph, sr.turbidity
             FROM alerts a
             LEFT JOIN sensor_readings sr ON a.device_id = sr.device_id 
             WHERE a.created_at > datetime('now', '-{} hours')

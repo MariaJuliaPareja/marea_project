@@ -9,13 +9,22 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 #Creating function for the main app
 def create_app():
-    # Flask application
+    #Flask application
     app = Flask(__name__)
     CORS(app)
-    # Configuration
+    #Configuration
     app.config['DATABASE_PATH'] = 'data/marea_data.db'
-    # Initialize components
+    #Initialize components
     init_components(app)
-    # Register modular routes
+    #Register modular routes
     register_blueprints(app)
     return app
+
+#Function to initializate the database and components
+def init_components(app):
+    
+    # Import your database class
+    from models.database import MAREADatabase
+    
+
+

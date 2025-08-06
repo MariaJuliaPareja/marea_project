@@ -26,5 +26,8 @@ def init_components(app):
     # Import your database class
     from models.database import MAREADatabase
     
+    app.db = MAREADatabase(app.config['DATABASE_PATH'])    
+    print("Components initialized")
+    print(f"Database: {app.config['DATABASE_PATH']}")
 
 
